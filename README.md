@@ -1,11 +1,17 @@
 # dsh-hsr-ui
 
+**简体中文** | [English](README.en.md)
+
 给 **DeepSeek Harness** 换一套 **崩坏：星穹铁道** 风格的皮肤：深空藏青 × 鎏金配色、
 毛玻璃表面、自选背景图，外加一个会眨眼、眼珠跟随鼠标的**分层动立绘**。
 
 **只改颜色与观感，不改任何布局** —— 按钮位置、交互、快捷键一律保持原样。
 
 > **Web 端**（`dsh web`）与**桌面端**（DeepSeek Harness 桌面应用）都支持 ✓
+
+> 🤖 **本项目全程由 DeepSeek Harness 编写完成** —— 插件代码（浏览器半边约 2600 行、主机半边、
+> 22 层分层立绘的离线管线）、全部文档以及 **179 条回归测试**，都是它在多轮对话中生成、重构与维护的；
+> 立绘 / 背景等素材与设计取舍由作者提供与把关 ✓。
 
 <sub>A Honkai: Star Rail themed skin for DeepSeek Harness — deep-space navy & gold palette,
 glass surfaces, a user-chosen background image, and a layered animated portrait that blinks
