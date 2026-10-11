@@ -1,6 +1,6 @@
 {
   "name": "dsh-hsr-ui",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Honkai: Star Rail themed skin with an animated layered portrait for the DeepSeek Harness Web GUI — recolors the --dsw-* tokens, keeps the layout unchanged.",
   "icon": "./icon.svg",
   "type": "module",

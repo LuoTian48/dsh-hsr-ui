@@ -340,7 +340,11 @@ body[data-ds-dark-theme] .wSkVaW_header {
 
 /* 中间卡片：一张毛玻璃卡覆盖消息 + 输入框 + 底部统计；输入框保持实色、统计透明坐在卡片上 */
 /* 水平位置由 --hsr-chat-x（0~100%）控制：0=靠左，50=居中（默认），100=靠右 */
-.wSkVaW_scrollBody {
+.wSkVaW_scrollBody,
+/* ↑ 这是 Web 端（npm 版 DSH）的构建类名；桌面端是另一套构建、哈希不同（实测 5 个写死类名全部失配 ✗），
+   所以同一条规则再绑一份到**插件自己打的类**上 —— 运行时用稳定钩子 data-conversation-scroll
+   找到对话卡后加上 hsr-conv-card（见 installConversationTag）。这样任何构建都不会再失配 ✓ */
+.hsr-conv-card {
   align-self: flex-start;
   width: 100%;
   max-width: 812px;
@@ -351,7 +355,8 @@ body[data-ds-dark-theme] .wSkVaW_header {
   border: 1px solid var(--dsw-alias-border-l2);
   border-radius: 20px;
 }
-body[data-ds-dark-theme] .wSkVaW_scrollBody {
+body[data-ds-dark-theme] .wSkVaW_scrollBody,
+body[data-ds-dark-theme] .hsr-conv-card {
   background: rgb(22 29 48 / var(--hsr-surface-alpha, 0.5));
 }
 
@@ -1193,6 +1198,54 @@ body.hsr-portrait-anim-off .hsr-portrait-fx .hsr-portrait-spark {
       }, PORTRAIT_LEAVE_MS);
     }
 
+    /** 给对话卡打上**插件自己的类** hsr-conv-card。
+     *
+     *  为什么需要它：毛玻璃那几条规则原先绑在宿主的 CSS Modules 类名上
+     *  （`.wSkVaW_scrollBody` 等），而这类名是**构建产物哈希** —— Web 端（npm 版 DSH）与
+     *  桌面端是两套构建，实测桌面端**5 个写死类名全部失配** ✗（`frame/scrollBody/header/ydkMvW/插件页`
+     *  全为 false），于是主题配色还在、玻璃卡却没了 ✗。
+     *  `[data-conversation-scroll]` 是 **data 属性**（不是哈希 ✓），两套构建都有 ✓
+     *  —— 立绘定位也一直靠它 ✓ —— 所以用它当稳定钩子，命中后补上插件自己的类 ✓。
+     *
+     *  切页面/换会话时这个元素会被重建，所以放进既有的 1.5s 轮询里重复打（幂等 ✓、无副作用 ✓）。 */
+    function tagConversationCard() {
+      if (typeof document === "undefined" || !document.querySelector) return;
+      const card = document.querySelector("[data-conversation-scroll]");
+      if (!card || !card.classList || typeof card.classList.add !== "function") return;
+      if (typeof card.classList.contains === "function" && card.classList.contains("hsr-conv-card")) return;
+      card.classList.add("hsr-conv-card");
+    }
+
+    /** 让背景图透出来 —— 桌面端专用的一步。
+     *
+     *  背景图由 `body::after`（position:fixed; z-index:-1）绘制 ✓，它在**所有内容层之下** ✓。
+     *  Web 端没问题是因为宿主 frame 用的是半透明 token（`--dsw-alias-bg-base` ✓），
+     *  而桌面端那层的类名不同 ✗（片段 C 实测 `frame: false` ✗），插件的透明化规则没命中 ✗ →
+     *  桌面端根容器**自带不透明底色** ✗ → 整张背景图被盖住 ✗（现象：选了图也不显示 ✓）。
+     *
+     *  修法：从对话卡往上走到 body ✓，把这条链上**计算出来不透明**（alpha ≥ 0.9）的祖先
+     *  改成与 Web 端同款的半透明氛围色 `--dsw-alias-bg-base` ✓（用 inline style，优先级最高 ✓，
+     *  压得过宿主任何类规则 ✓）。只动这一条链 ✓，不碰侧栏/顶栏等其它表面 ✓。 */
+    function uncoverBackground() {
+      if (typeof document === "undefined" || !document.querySelector || typeof getComputedStyle !== "function") return;
+      const card = document.querySelector("[data-conversation-scroll]");
+      if (!card) return;
+      let el = card.parentElement, guard = 0;
+      while (el && el !== document.body && guard++ < 12) {
+        let bg = "";
+        try { bg = getComputedStyle(el).backgroundColor || ""; } catch { bg = ""; }
+        const m = /^rgba?\(([^)]+)\)$/.exec(bg);
+        if (m) {
+          const parts = m[1].split(",");
+          const alpha = parts.length > 3 ? parseFloat(parts[3]) : 1;
+          if (alpha >= 0.9 && el.style && typeof el.style.setProperty === "function") {
+            el.style.setProperty("background-color", "var(--dsw-alias-bg-base)");
+          }
+        }
+        el = el.parentElement;
+      }
+    }
+
     /** 把立绘放到窗口内；水平位置按百分比（0=最左，50=居中，100=最右），空间不足时自动隐藏。 */
     function placePortrait() {
       if (!portraitImg || typeof document === "undefined") return;
@@ -1709,7 +1762,11 @@ body.hsr-portrait-anim-off .hsr-portrait-fx .hsr-portrait-spark {
       document.addEventListener("visibilitychange", rigCheck);
       const rigCheckTimer = window.setInterval(rigCheck, 600000);
       window.addEventListener("resize", placePortrait);
-      const timer = window.setInterval(placePortrait, 1500);
+      // 对话卡打标记 + 让背景图透出来：装上立刻来一次，随后跟着轮询重复做
+      //（切页面/换会话时这些元素会被重建 ✓；两步都是幂等的 ✓）
+      tagConversationCard();
+      uncoverBackground();
+      const timer = window.setInterval(() => { placePortrait(); tagConversationCard(); uncoverBackground(); }, 1500);
       return () => {
         disposed = true;
         window.clearInterval(timer);
