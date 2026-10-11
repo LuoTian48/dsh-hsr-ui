@@ -23,16 +23,20 @@
 
 ```
 action: install_bundle
-target: github:<你的用户名>/<仓库名>        # 例如 github:someone/hsr-ui
+target: github:<你的用户名>/dsh-hsr-ui        # 例如 github:someone/dsh-hsr-ui
 ```
 
 它会自动完成「装包 + 选择 bundle + 写 profile」，**不要**手工改 profile 文件。
 装完按提示重启 Harness（替换已安装的包需要重启才会加载新的 JS 模块）。
 
+> 注意：**仓库名是 `dsh-hsr-ui`，而包名是 `hsr-ui`** ✓ —— pnpm 按 `package.json` 的
+> `name` 链接，所以装完是 `node_modules/hsr-ui` ✓，插件页里显示的也是 `hsr-ui` ✓。
+> 两者不一致是正常的 ✓。
+
 ### 方式 B：本地目录安装（离线可用）
 
 ```sh
-git clone https://github.com/<你的用户名>/<仓库名>.git
+git clone https://github.com/<你的用户名>/dsh-hsr-ui.git
 ```
 
 然后：
