@@ -1,0 +1,21 @@
+# 依赖/构建产物
+node_modules/
+*.log
+npm-debug.log*
+
+# 备份与临时文件
+*.bak
+*.orig
+*~
+*.tmp
+# 微信/系统缩略图缓存
+Thumbs.db
+.DS_Store
+
+# 编辑器
+.vscode/
+.idea/
+
+# 遗留脚本：它替换的是早已删除的 BG_URI / BG_URI_LIGHT 常量（插件现在不内置背景图），
+# 已经跑不通了；留在本地做历史参考，不随仓库发布。
+set-background.ps1

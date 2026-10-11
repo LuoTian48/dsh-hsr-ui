@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="hsr-ui">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1d2740"/>
+      <stop offset="1" stop-color="#0e1420"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f0d489"/>
+      <stop offset="1" stop-color="#c79a35"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="url(#sky)"/>
+  <rect x="2.75" y="2.75" width="58.5" height="58.5" rx="13.4" fill="none" stroke="#e0b64d" stroke-opacity="0.45" stroke-width="1.5"/>
+  <!-- 四芒星：主题里那种鎏金装饰 -->
+  <path d="M32 12 L35.6 28.4 L52 32 L35.6 35.6 L32 52 L28.4 35.6 L12 32 L28.4 28.4 Z" fill="url(#gold)"/>
+  <!-- 小星点 -->
+  <circle cx="45.5" cy="18.5" r="2.1" fill="#f0d489" fill-opacity="0.9"/>
+  <circle cx="19" cy="45" r="1.5" fill="#f0d489" fill-opacity="0.7"/>
+</svg>

@@ -1,0 +1,6 @@
+# hsr-ui 作为 bundle 的行声明：装好后 DSH 从这里插入宿主行。
+# 客户端半边（样式 / 设置页 / 分层立绘运行时）由同一个 package.json 的 dsh.client 声明，
+# 不需要在这里重复。
+- insert:
+    - id: hsr-ui
+      name: hsr-ui
