@@ -1,8 +1,8 @@
-// hsr-ui client bundle — Honkai: Star Rail themed skin for the DSH Web GUI.
+// dsh-hsr-ui client bundle — Honkai: Star Rail themed skin for the DSH Web GUI.
 // Pure token/CSS restyle: NO layout change (button positions etc. untouched).
-// Loaded by the browser through the client-module system (/plugins/hsr-ui/client.js).
+// Loaded by the browser through the client-module system.
 window.__ModuleLoader__.load({
-  id: "hsr-ui",
+  id: "dsh-hsr-ui",
   factory: (require) => {
     const module = { exports: {} };
     const exports = module.exports;
@@ -2463,7 +2463,7 @@ body.hsr-portrait-anim-off .hsr-portrait-fx .hsr-portrait-spark {
           existingStyle.textContent = css;
         } else {
           const style = document.createElement("style");
-          style.dataset.plugin = "hsr-ui";
+          style.dataset.plugin = "dsh-hsr-ui";
           style.dataset.pluginCss = tagId;
           style.textContent = css;
           document.head.appendChild(style);

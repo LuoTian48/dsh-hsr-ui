@@ -1,6 +1,10 @@
-# hsr-ui 作为 bundle 的行声明：装好后 DSH 从这里插入宿主行。
+# dsh-hsr-ui 作为 bundle 的行声明：装好后 DSH 从这里插入宿主行。
 # 客户端半边（样式 / 设置页 / 分层立绘运行时）由同一个 package.json 的 dsh.client 声明，
 # 不需要在这里重复。
+#
+# ⚠️ 这里的 name 必须与 package.json 的 name 完全一致：pnpm 按包名把包装进 profile，
+#    所以改名（hsr-ui → dsh-hsr-ui）是一次**破坏性变更** —— 旧 profile 里
+#    `"hsr-ui": "link:…"` 依赖与 `name: hsr-ui` 的行都要一并删掉再装新的，否则解析失败。
 - insert:
-    - id: hsr-ui
-      name: hsr-ui
+    - id: dsh-hsr-ui
+      name: dsh-hsr-ui

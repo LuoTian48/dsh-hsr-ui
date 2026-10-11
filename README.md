@@ -17,33 +17,32 @@
 
 ## 安装
 
+> **包名与仓库名一致：`dsh-hsr-ui`** ✓（`package.json` 的 `name` ✓、bundle 插入行的 `name` ✓、
+> 仓库名 ✓ 三者相同 ✓）。装完是 `node_modules/dsh-hsr-ui` ✓，插件页里显示的也是 `dsh-hsr-ui` ✓。
+
 ### 方式 A：从 GitHub 安装（推荐，一条命令）
 
 在 DeepSeek Harness 里让 Agent 调用 `plugin_manager`：
 
 ```
 action: install_bundle
-target: github:<你的用户名>/dsh-hsr-ui        # 例如 github:someone/dsh-hsr-ui
+target: github:LuoTian48/dsh-hsr-ui
 ```
 
 它会自动完成「装包 + 选择 bundle + 写 profile」，**不要**手工改 profile 文件。
 装完按提示重启 Harness（替换已安装的包需要重启才会加载新的 JS 模块）。
 
-> 注意：**仓库名是 `dsh-hsr-ui`，而包名是 `hsr-ui`** ✓ —— pnpm 按 `package.json` 的
-> `name` 链接，所以装完是 `node_modules/hsr-ui` ✓，插件页里显示的也是 `hsr-ui` ✓。
-> 两者不一致是正常的 ✓。
-
 ### 方式 B：本地目录安装（离线可用）
 
 ```sh
-git clone https://github.com/<你的用户名>/dsh-hsr-ui.git
+git clone https://github.com/LuoTian48/dsh-hsr-ui.git
 ```
 
 然后：
 
 ```
 action: install_bundle
-target: /绝对路径/hsr-ui
+target: /克隆目录的绝对路径
 ```
 
 ### 方式 C：手工挂载（旧方式，仅当上面两条走不通时）
@@ -51,19 +50,27 @@ target: /绝对路径/hsr-ui
 1. 把本目录放到任意位置；
 2. 编辑某个 profile 的 `package.json`（Web 端默认 `~/.dsh/profiles/web/`，
    桌面端 `~/.dsh/profiles/desktop/`），在 `dependencies` 里加
-   `"hsr-ui": "link:<绝对路径>/hsr-ui"`；
+   `"dsh-hsr-ui": "link:<本仓库绝对路径>"`；
 3. 在**同一个目录**的 `cordis.patch.yml` 里加：
 
    ```yaml
    - insert:
-       - id: hsr-ui
-         name: hsr-ui
+       - id: dsh-hsr-ui
+         name: dsh-hsr-ui
    ```
 
 4. 在该 profile 目录执行 `pnpm install`，然后**重启** Harness（不是刷新页面）。
 
-> ⚠️ 三种方式**不要混用**：bundle 安装与手工 insert 同时存在会出现重复的 `hsr-ui` 行 ✗，
+> ⚠️ 三种方式**不要混用**：bundle 安装与手工 insert 同时存在会出现重复的 `dsh-hsr-ui` 行 ✗，
 > 表现为加载报错或行为异常。切换方式前先删掉手工那条。
+>
+> ⚠️ **从 1.x 升级（旧包名 `hsr-ui`）**：包名变了 ✗，必须**先卸旧再装新**：
+> ① 在 profile 的 `cordis.patch.yml` 里删掉 `id: hsr-ui` / `name: hsr-ui` 那条 insert ✗；
+> ② 从 profile 的 `package.json` 里删掉 `"hsr-ui": "link:…"` 依赖 ✗；
+> ③ 在该 profile 目录 `pnpm install`（清掉旧的 node_modules/hsr-ui 链接 ✓）；
+> ④ 再按方式 A/B 装 `dsh-hsr-ui` ✓。
+> **你的设置不会丢** ✓：配色、背景图、立绘偏好都存在 localStorage 的 `hsr-ui.*` 键下 ✓，
+> 与包名无关 ✓（路由前缀也仍是 `/hsr-ui/assets/*` ✓，同样不受改名影响 ✓）。
 
 ### 装完怎么用
 
@@ -84,8 +91,8 @@ target: /绝对路径/hsr-ui
 
 开发期推荐用 pnpm 的 **`link:` 协议**手工挂到某个 profile（实时链接，不是快照 ✓）：
 
-> - `package.json` → `"hsr-ui": "link:<本仓库的绝对路径>"`
-> - `node_modules/hsr-ui` → junction 指向本仓库
+> - `package.json` → `"dsh-hsr-ui": "link:<本仓库的绝对路径>"`
+> - `node_modules/dsh-hsr-ui` → junction 指向本仓库
 > - `cordis.patch.yml` → loader 条目
 
 重启 Harness 即生效 ✓。下面命令供换机/重装时使用：
@@ -96,8 +103,8 @@ dsh plugin --profile web add "link:<本仓库的绝对路径>"
 
 # 2. 在 ~/.dsh/profiles/web/cordis.patch.yml 末尾追加 loader 条目：
 #    - insert:
-#        - id: hsr-ui
-#          name: hsr-ui
+#        - id: dsh-hsr-ui
+#          name: dsh-hsr-ui
 
 # 3. 重启
 dsh web
